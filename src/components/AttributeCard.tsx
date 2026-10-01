@@ -1,35 +1,20 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { AccessibilityFact } from '../types/accessibility';
-import StatusBadge from './StatusBadge';
 
-interface Props {
-  fact: AccessibilityFact;
-}
+export default function AttributeCard({ fact }: { fact: any }) {
+  // Extracting likely property names from your mock data
+  const label = fact.title || fact.name || fact.label || 'Accessibility Feature';
+  const description = fact.description || fact.details || '';
 
-export default function AttributeCard({ fact }: Props) {
   return (
     <View style={styles.card}>
-      <View style={styles.header}>
-        <Text style={styles.attributeTitle}>{fact.attribute}</Text>
-        <StatusBadge status={fact.status} />
+      <View style={styles.iconContainer}>
+        <Text style={styles.icon}>✓</Text>
       </View>
-
-      <Text style={styles.description}>{fact.description}</Text>
-
-      {/* Show conflict alert if status is conflicting */}
-      {fact.status === 'conflicting' && fact.conflictDetail && (
-        <View style={styles.conflictBox}>
-          <Text style={styles.conflictTitle}>⚠️ Discrepancy Note:</Text>
-          <Text style={styles.conflictText}>{fact.conflictDetail}</Text>
-        </View>
-      )}
-
-      {/* Source & Date Footer */}
-      <View style={styles.footer}>
-        <Text style={styles.metaText}>
-          Source: <Text style={styles.metaBold}>{fact.sourceName}</Text>
-        </Text>
-        <Text style={styles.metaText}>Checked: {fact.lastChecked}</Text>
+      <View style={styles.content}>
+        <Text style={styles.title}>{label}</Text>
+        {description ? (
+          <Text style={styles.description}>{description}</Text>
+        ) : null}
       </View>
     </View>
   );
@@ -37,68 +22,48 @@ export default function AttributeCard({ fact }: Props) {
 
 const styles = StyleSheet.create({
   card: {
+    flexDirection: 'row',
     backgroundColor: '#ffffff',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
     borderColor: '#e2e8f0',
-    boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.04)', // Fixed shadow property
+    // iOS Shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    // Android Shadow
     elevation: 2,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  iconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#dcfce3',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
-    gap: 8,
-    flexWrap: 'wrap',
+    marginRight: 12,
+    marginTop: 2,
   },
-  attributeTitle: {
+  icon: {
+    fontSize: 16,
+    color: '#166534',
+    fontWeight: '900',
+  },
+  content: {
+    flex: 1,
+  },
+  title: {
     fontSize: 16,
     fontWeight: '700',
     color: '#0f172a',
-    flexShrink: 1,
+    marginBottom: 4,
   },
   description: {
     fontSize: 14,
-    color: '#334155',
-    lineHeight: 20,
-    marginBottom: 12,
-  },
-  conflictBox: {
-    backgroundColor: '#fef2f2',
-    borderLeftWidth: 4,
-    borderLeftColor: '#ef4444',
-    padding: 10,
-    borderRadius: 6,
-    marginBottom: 12,
-  },
-  conflictTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#991b1b',
-    marginBottom: 2,
-  },
-  conflictText: {
-    fontSize: 13,
-    color: '#b91c1c',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderTopWidth: 1,
-    borderTopColor: '#f1f5f9',
-    paddingTop: 8,
-    flexWrap: 'wrap',
-    gap: 4,
-  },
-  metaText: {
-    fontSize: 12,
     color: '#64748b',
-  },
-  metaBold: {
-    fontWeight: '600',
-    color: '#475569',
+    lineHeight: 20,
   },
 });
