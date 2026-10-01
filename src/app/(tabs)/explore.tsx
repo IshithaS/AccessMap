@@ -5,10 +5,20 @@ import { Platform, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { MOCK_LOCATIONS } from '../../data/mockLocations';
 
+// Helper function to pick an emoji based on the location type
+const getMarkerEmoji = (type: string) => {
+  const t = type.toLowerCase();
+  if (t.includes('hospital') || t.includes('health')) return '🏥';
+  if (t.includes('library') || t.includes('civic')) return '📚';
+  if (t.includes('restaurant') || t.includes('food')) return '🍽️';
+  if (t.includes('transit') || t.includes('station')) return '🚆';
+  if (t.includes('park')) return '🌳';
+  return '📍'; // Default fallback
+};
+
 export default function ExploreScreen() {
   const router = useRouter();
   
-  // Start with a default region (Charlotte, NC) while waiting for GPS
   const [region, setRegion] = useState({
     latitude: 35.2271,
     longitude: -80.8431,
@@ -18,25 +28,19 @@ export default function ExploreScreen() {
 
   useEffect(() => {
     (async () => {
-      // Ask the user for permission to use their GPS
       let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Permission to access location was denied');
-        return;
-      }
+      if (status !== 'granted') return;
 
-      // If granted, grab the current coordinates and center the map
       let location = await Location.getCurrentPositionAsync({});
       setRegion({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
-        latitudeDelta: 0.05, // Zoomed in a bit closer
+        latitudeDelta: 0.05,
         longitudeDelta: 0.05,
       });
     })();
   }, []);
 
-  // Safe fallback for web testing (this won't trigger since you are on your phone)
   if (Platform.OS === 'web') {
     return (
       <View style={styles.webContainer}>
@@ -53,8 +57,8 @@ export default function ExploreScreen() {
       <MapView 
         style={styles.map} 
         region={region} 
-        showsUserLocation={true} // Displays the blue dot
-        showsMyLocationButton={true} // Adds a button to snap back to the user
+        showsUserLocation={true}
+        showsMyLocationButton={true}
       >
         {MOCK_LOCATIONS.map((location) => (
           <Marker
@@ -66,7 +70,12 @@ export default function ExploreScreen() {
             title={location.name}
             description={location.type}
             onCalloutPress={() => router.push(`/location/${location.id}`)}
-          />
+          >
+            {/* Custom Marker View */}
+            <View style={styles.customMarker}>
+              <Text style={styles.markerText}>{getMarkerEmoji(location.type)}</Text>
+            </View>
+          </Marker>
         ))}
       </MapView>
     </View>
@@ -76,6 +85,22 @@ export default function ExploreScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { width: '100%', height: '100%' },
+  customMarker: {
+    backgroundColor: '#ffffff',
+    padding: 8,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#0f172a',
+    // Shadows to make the pins pop off the map
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  markerText: {
+    fontSize: 20,
+  },
   webContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8fafc', padding: 20 },
   webTitle: { fontSize: 24, fontWeight: '800', color: '#0f172a', marginBottom: 12 },
   webText: { fontSize: 16, color: '#64748b', textAlign: 'center', maxWidth: 400, lineHeight: 24 },
