@@ -1,3 +1,13 @@
+import { Ionicons } from '@expo/vector-icons';
+import {
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
 const DAILY_ARTICLES = [
   {
     title: 'We Are Not a Burden: Why Accessibility Is a Human Right',
@@ -35,3 +45,99 @@ const DAILY_ARTICLES = [
     link: 'https://www.ted.com/talks/stella_young_i_m_not_your_inspiration_thank_you_very_much',
   },
 ];
+
+export default function LearnScreen() {
+  const handleOpenLink = (url: string) => {
+    Linking.openURL(url).catch((err) =>
+      console.error('Failed to open URL:', err)
+    );
+  };
+
+  return (
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Text style={styles.header}>Accessibility Voices</Text>
+      <Text style={styles.subHeader}>
+        Curated essays, op-eds, and talks on disability justice and inclusive design.
+      </Text>
+
+      {DAILY_ARTICLES.map((article, index) => (
+        <View key={index} style={styles.card}>
+          <Text style={styles.title}>{article.title}</Text>
+          <Text style={styles.author}>{article.author}</Text>
+          <Text style={styles.summary}>{article.summary}</Text>
+          <TouchableOpacity
+            style={styles.linkButton}
+            onPress={() => handleOpenLink(article.link)}
+          >
+            <Text style={styles.linkText}>Read Article</Text>
+            <Ionicons name="open-outline" size={16} color="#4338ca" />
+          </TouchableOpacity>
+        </View>
+      ))}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f9fafb',
+  },
+  content: {
+    padding: 20,
+    paddingTop: 60,
+  },
+  header: {
+    fontSize: 26,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  subHeader: {
+    fontSize: 15,
+    color: '#4b5563',
+    marginTop: 4,
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+  card: {
+    backgroundColor: '#ffffff',
+    padding: 18,
+    borderRadius: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  title: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#1f2937',
+    marginBottom: 4,
+  },
+  author: {
+    fontSize: 13,
+    color: '#6b7280',
+    fontWeight: '500',
+    marginBottom: 10,
+  },
+  summary: {
+    fontSize: 14,
+    color: '#374151',
+    lineHeight: 20,
+    marginBottom: 14,
+  },
+  linkButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  linkText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#4338ca',
+  },
+});
