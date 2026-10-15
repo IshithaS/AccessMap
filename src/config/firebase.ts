@@ -1,11 +1,10 @@
-import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getApp, getApps, initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAfOehmtr7kyxG0KEPO7syjhfeL2Y7L6oU",
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
   authDomain: "accessmap-4b213.firebaseapp.com",
-  projectId: "accessmap-4b213",
   storageBucket: "accessmap-4b213.firebasestorage.app",
   messagingSenderId: "632723565570",
   appId: "1:632723565570:web:2f109a4b2f462022ed0b1b",
